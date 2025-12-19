@@ -21,12 +21,11 @@ This project is built step-by-step as a learning and portfolio tool, inspired by
 ---
 
 ## 🛠️ Installation
+bash
+git clone https://github.com/the-artist111/PyEnumScanner.git
+cd PyEnumScanner
 
-Clone the repository:
 
-```bash
-git clone https://github.com/YOURUSERNAME/PyEnumScanner.git
-cd PyEnumScanne
 Install dependencies:
 
 pip install -r requirements.txt
