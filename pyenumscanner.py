@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python3
 import requests
 import argparse
@@ -6,9 +7,14 @@ import re
 from urllib.parse import urljoin
 from concurrent.futures import ThreadPoolExecutor
 from colorama import Fore, Style, init
+import os
 
+# Initialize colorama
 init(autoreset=True)
 
+# ------------------------------
+# Config & Globals
+# ------------------------------
 USER_AGENTS = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
     "Mozilla/5.0 (X11; Linux x86_64)",
@@ -20,38 +26,61 @@ JS_ENDPOINT_REGEX = r"""(?:"|')(/(?:api|v1|v2|auth|admin|user|users|login|logout
 found_js = set()
 found_endpoints = set()
 
+# ------------------------------
+# Banner
+# ------------------------------
 def banner():
     print(Fore.CYAN + """
     =====================================
       PyEnumScanner v3.0
       JS Endpoint Extractor
-      Author: zzzboom
+      Author: the-artist111
     =====================================
     """)
 
-parser.add_argument("-w", "--wordlist", default="wordlists/default.txt")
-
-
+# ------------------------------
+# Argument Parsing
+# ------------------------------
 def parse_args():
     parser = argparse.ArgumentParser(description="Advanced Web Enumeration Scanner")
     parser.add_argument("-u", "--url", required=True, help="Target URL")
-    parser.add_argument("-w", "--wordlist", default="wordlists/common.txt")
-    parser.add_argument("-t", "--threads", type=int, default=15)
-    parser.add_argument("-o", "--output", help="Save scan results")
+    parser.add_argument(
+        "-w",
+        "--wordlist",
+        default="wordlists/default.txt",
+        help="Path to wordlist (default: wordlists/default.txt)"
+    )
+    parser.add_argument("-t", "--threads", type=int, default=15, help="Number of threads")
+    parser.add_argument("-o", "--output", help="Save scan results to file")
     parser.add_argument("--extract-js", action="store_true", help="Extract JS endpoints")
     return parser.parse_args()
 
+# ------------------------------
+# Headers
+# ------------------------------
 def headers():
     return {"User-Agent": random.choice(USER_AGENTS)}
 
+# ------------------------------
+# Wordlist Loader (FIXED)
+# ------------------------------
 def load_wordlist(path):
-    try:
-        with open(path, "r") as f:
-            return f.read().splitlines()
-    except:
-        print(Fore.RED + "[!] Wordlist not found")
+    if not os.path.isfile(path):
+        print(Fore.RED + f"[!] Wordlist not found: {path}")
         exit(1)
 
+    with open(path, "r", encoding="utf-8", errors="ignore") as f:
+        words = [line.strip() for line in f if line.strip()]
+
+    if not words:
+        print(Fore.RED + f"[!] Wordlist is empty: {path}")
+        exit(1)
+
+    return words
+
+# ------------------------------
+# Scan a single path
+# ------------------------------
 def scan_path(base_url, path, output_file):
     full_url = urljoin(base_url, path)
 
@@ -73,6 +102,9 @@ def scan_path(base_url, path, output_file):
     except requests.RequestException:
         pass
 
+# ------------------------------
+# Extract JS Endpoints
+# ------------------------------
 def extract_js_endpoints(js_url):
     try:
         r = requests.get(js_url, headers=headers(), timeout=6)
@@ -86,6 +118,9 @@ def extract_js_endpoints(js_url):
     except requests.RequestException:
         pass
 
+# ------------------------------
+# Start Scan
+# ------------------------------
 def start_scan(url, words, threads, output_file, extract_js):
     print(Fore.BLUE + f"[+] Target: {url}")
     print(Fore.BLUE + f"[+] Wordlist size: {len(words)}")
@@ -106,11 +141,17 @@ def start_scan(url, words, threads, output_file, extract_js):
                 for ep in found_endpoints:
                     f.write(ep + "\n")
 
+# ------------------------------
+# Main
+# ------------------------------
 def main():
     banner()
     args = parse_args()
     words = load_wordlist(args.wordlist)
     start_scan(args.url, words, args.threads, args.output, args.extract_js)
 
+# ------------------------------
+# Entry Point
+# ------------------------------
 if __name__ == "__main__":
     main()
