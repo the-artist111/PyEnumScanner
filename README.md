@@ -21,7 +21,10 @@ This project is built step-by-step as a learning and portfolio tool, inspired by
 ---
 
 ## 🛠️ Installation
-bash
+
+Clone the repository:
+
+```bash
 git clone https://github.com/the-artist111/PyEnumScanner.git
 cd PyEnumScanner
 
