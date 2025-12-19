@@ -29,6 +29,9 @@ def banner():
     =====================================
     """)
 
+parser.add_argument("-w", "--wordlist", default="wordlists/default.txt")
+
+
 def parse_args():
     parser = argparse.ArgumentParser(description="Advanced Web Enumeration Scanner")
     parser.add_argument("-u", "--url", required=True, help="Target URL")
