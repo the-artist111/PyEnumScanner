@@ -34,11 +34,30 @@ Install dependencies:
 pip install -r requirements.txt
 
 ⚙️ Usage
-Basic directory scan
+
+Basic directory scan (uses built-in default wordlist):
+
 python pyenumscanner.py -u https://example.com
 
-Scan with JavaScript endpoint extraction
+
+Scan with JavaScript endpoint extraction:
+
 python pyenumscanner.py -u https://example.com --extract-js
+
+
+Save results to a file:
+
+python pyenumscanner.py -u https://example.com --extract-js -o results.txt
+
+
+Increase scan speed (threads):
+
+python pyenumscanner.py -u https://example.com -t 30
+
+
+Use a custom wordlist (absolute or relative path):
+
+python pyenumscanner.py -u https://example.com -w /path/to/wordlist.txt
 
 Save results to a file
 python pyenumscanner.py -u https://example.com --extract-js -o results.txt
